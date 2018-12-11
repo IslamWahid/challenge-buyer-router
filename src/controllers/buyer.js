@@ -7,6 +7,7 @@ var buyerController = {
   post: (req, res, opts, cb) => {
     body(req, res, function (err, reqBody) {
       if (err) return cb(err)
+
       buyerModel.create(reqBody, (err, data) => {
         if (err) return cb(err)
         if (data === 'OK') {
@@ -22,6 +23,7 @@ var buyerController = {
   get: (req, res, opts, cb) => {
     buyerModel.findOne(opts.params.id, (err, data) => {
       if (err) return cb(err)
+
       send(req, res, {
         body: JSON.parse(data),
         statusCode: statusCodes['OK']
