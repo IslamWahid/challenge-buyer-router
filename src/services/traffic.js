@@ -1,6 +1,7 @@
 var getAllOffers = buyers => {
   var allOffers = []
-  buyers.forEach(({ offers }) => {
+  Object.values(buyers).forEach(buyer => {
+    var { offers } = JSON.parse(buyer)
     allOffers.push(...offers)
   })
   return allOffers
@@ -10,20 +11,20 @@ var trafficService = {
   getBestLocation: (buyers, query) => {
     var { timestamp, device: reqDevice, state: reqState } = query
     var reqDate = new Date(timestamp)
-    var reqHour = reqDate.getHours()
-    var reqDay = reqDate.getDay()
+    var reqHour = reqDate.getUTCHours()
+    var reqDay = reqDate.getUTCDay()
 
     var bestOffers = getAllOffers(buyers)
       .filter(
         ({ criteria: { device, state, hour, day } }) =>
-          reqDevice === device &&
-          reqState === state &&
-          reqDay === day &&
+          device.includes(reqDevice) &&
+          state.includes(reqState) &&
+          day.includes(reqDay) &&
           hour.includes(reqHour)
       )
-      .sort(({ value: valueA }, { value: valueB }) => valueA > valueB)
+      .sort(({ value: valueA }, { value: valueB }) => valueB - valueA)
 
-    return bestOffers[0]
+    return bestOffers[0].location
   }
 }
 
