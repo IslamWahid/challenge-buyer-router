@@ -8,6 +8,10 @@ var buyerModel = {
 
   findOne: (id, cb) => {
     redisClient.hget(HASH_NAME, id, cb)
+  },
+
+  findAll: cb => {
+    redisClient.hgetall(HASH_NAME, cb)
   }
 }
 
