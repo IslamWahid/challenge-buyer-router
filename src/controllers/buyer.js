@@ -1,6 +1,7 @@
 var body = require('body/json')
 var send = require('send-data/json')
 var buyerModel = require('../models/buyers')
+var statusCodes = require('../const/statusCode.json')
 
 var buyerController = {
   post: (req, res, opts, cb) => {
@@ -10,8 +11,8 @@ var buyerController = {
         if (err) return cb(err)
         if (data === 'OK') {
           send(req, res, {
-            body: null,
-            statusCode: 201
+            body: '',
+            statusCode: statusCodes['Created']
           })
         }
       })
@@ -23,7 +24,7 @@ var buyerController = {
       if (err) return cb(err)
       send(req, res, {
         body: JSON.parse(data),
-        statusCode: 200
+        statusCode: statusCodes['OK']
       })
     })
   }

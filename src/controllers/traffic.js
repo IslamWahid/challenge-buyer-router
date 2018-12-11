@@ -1,6 +1,7 @@
-var send = require('send-data/json')
+var send = require('send-data')
 var buyerModel = require('../models/buyers')
 var trafficService = require('../services/traffic')
+var statusCodes = require('../const/statusCode.json')
 
 var trafficController = {
   route: (req, res, opts, cb) => {
@@ -9,7 +10,7 @@ var trafficController = {
       var bestLocation = trafficService.getBestLocation(buyers, opts.query)
       send(req, res, {
         headers: { location: bestLocation },
-        statusCode: 302
+        statusCode: statusCodes['Found']
       })
     })
   }
