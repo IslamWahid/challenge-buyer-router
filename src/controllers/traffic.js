@@ -3,7 +3,7 @@ var buyerModel = require('../models/buyers')
 var trafficService = require('../services/traffic')
 var statusCodes = require('../const/statusCode.json')
 
-var trafficController = {
+module.exports = {
   route: (req, res, opts, cb) => {
     buyerModel.findAll((err, buyers) => {
       if (err) return cb(err)
@@ -15,5 +15,3 @@ var trafficController = {
     })
   }
 }
-
-module.exports = trafficController

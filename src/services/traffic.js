@@ -1,22 +1,6 @@
 var HEAD = 0
 
-/**
- * flatten buyers Object to get
- * all offers from all buyers
- *
- * @param {*} buyers
- * @returns [offers]
- */
-var _getAllOffers = buyers => {
-  var allOffers = []
-  Object.values(buyers).forEach(buyer => {
-    var { offers } = JSON.parse(buyer)
-    allOffers.push(...offers)
-  })
-  return allOffers
-}
-
-var trafficService = {
+module.exports = {
   getBestLocation: (buyers, query) => {
     var { timestamp, device: reqDevice, state: reqState } = query
     var reqDate = new Date(timestamp)
@@ -42,4 +26,18 @@ var trafficService = {
   }
 }
 
-module.exports = trafficService
+/**
+ * flatten buyers Object to get
+ * all offers from all buyers
+ *
+ * @param {*} buyers
+ * @returns [offers]
+ */
+var _getAllOffers = buyers => {
+  var allOffers = []
+  Object.values(buyers).forEach(buyer => {
+    var { offers } = JSON.parse(buyer)
+    allOffers.push(...offers)
+  })
+  return allOffers
+}

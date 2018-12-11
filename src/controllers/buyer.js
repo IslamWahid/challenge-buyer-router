@@ -3,7 +3,7 @@ var send = require('send-data/json')
 var buyerModel = require('../models/buyers')
 var statusCodes = require('../const/statusCode.json')
 
-var buyerController = {
+module.exports = {
   post: (req, res, opts, cb) => {
     body(req, res, function (err, reqBody) {
       if (err) return cb(err)
@@ -31,5 +31,3 @@ var buyerController = {
     })
   }
 }
-
-module.exports = buyerController
