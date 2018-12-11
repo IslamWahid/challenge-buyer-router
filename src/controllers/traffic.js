@@ -4,13 +4,12 @@ var trafficService = require('../services/traffic')
 
 var trafficController = {
   route: (req, res, opts, cb) => {
-    buyerModel.findAll((err, data) => {
+    buyerModel.findAll((err, buyers) => {
       if (err) return cb(err)
-      var buyers = JSON.parse(data)
       var bestLocation = trafficService.getBestLocation(buyers, opts.query)
       send(req, res, {
-        body: bestLocation,
-        statusCode: 200
+        headers: { location: bestLocation },
+        statusCode: 302
       })
     })
   }
