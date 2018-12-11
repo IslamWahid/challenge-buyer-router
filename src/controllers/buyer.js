@@ -1,17 +1,30 @@
 var body = require('body/json')
 var send = require('send-data/json')
+var buyerModel = require('../models/buyers')
 
 var buyerController = {
   post: (req, res, opts, cb) => {
-    body(req, res, function (err, data) {
+    body(req, res, function (err, reqBody) {
       if (err) return cb(err)
-      console.log(data)
-      // send(req, res, {
-      //   body: {
-      //     foo: 'bar'
-      //   },
-      //   statusCode: 201
-      // })
+      buyerModel.create(reqBody, (err, data) => {
+        if (err) return cb(err)
+        if (data === 'OK') {
+          send(req, res, {
+            body: null,
+            statusCode: 201
+          })
+        }
+      })
+    })
+  },
+
+  get: (req, res, opts, cb) => {
+    buyerModel.findOne(opts.params.id, (err, data) => {
+      if (err) return cb(err)
+      send(req, res, {
+        body: JSON.parse(data),
+        statusCode: 200
+      })
     })
   }
 }
