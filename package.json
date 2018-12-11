@@ -22,7 +22,12 @@
     "tape": "^4.6.3"
   },
   "dependencies": {
-    "redis": "2.7.1"
+    "corsify": "^2.1.0",
+    "cuid": "^2.1.4",
+    "http-hash-router": "^2.0.1",
+    "redis": "2.7.1",
+    "req-logger": "^2.0.0",
+    "send-data": "^8.0.0"
   },
   "directories": {
     "test": "test"
