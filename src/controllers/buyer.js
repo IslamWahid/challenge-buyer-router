@@ -1,6 +1,7 @@
 var body = require('body/json')
 var send = require('send-data/json')
 var buyerModel = require('../models/buyers')
+var trafficService = require('../services/traffic')
 var statusCodes = require('../const/statusCode.json')
 
 module.exports = {
@@ -8,14 +9,16 @@ module.exports = {
     body(req, res, function (err, reqBody) {
       if (err) return cb(err)
 
-      buyerModel.create(reqBody, (err, data) => {
+      buyerModel.create(reqBody, err => {
         if (err) return cb(err)
-        if (data === 'OK') {
+
+        trafficService.saveCriteria(reqBody.offers, err => {
+          if (err) return cb(err)
           send(req, res, {
             body: '',
             statusCode: statusCodes['Created']
           })
-        }
+        })
       })
     })
   },
