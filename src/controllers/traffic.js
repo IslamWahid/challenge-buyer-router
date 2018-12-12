@@ -1,15 +1,14 @@
 var send = require('send-data')
-var buyerModel = require('../models/buyers')
 var trafficService = require('../services/traffic')
 var statusCodes = require('../const/statusCode.json')
 
 module.exports = {
   route: (req, res, opts, cb) => {
-    buyerModel.findAll((err, buyers) => {
+    trafficService.getBestLocation(opts.query, (err, results) => {
       if (err) return cb(err)
-      var bestLocation = trafficService.getBestLocation(buyers, opts.query)
+
       send(req, res, {
-        headers: { location: bestLocation },
+        headers: { location: results[1] },
         statusCode: statusCodes['Found']
       })
     })
