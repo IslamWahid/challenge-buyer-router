@@ -1,43 +1,48 @@
-var HEAD = 0
+var criteriaModel = require('../models/criteria')
 
 module.exports = {
-  getBestLocation: (buyers, query) => {
-    var { timestamp, device: reqDevice, state: reqState } = query
-    var reqDate = new Date(timestamp)
-    var reqHour = reqDate.getUTCHours()
-    var reqDay = reqDate.getUTCDay()
+  saveCriteria: (offers, cb) => {
+    var criteriaSetsObj = _getCriteriaSets(offers)
+    var commandsArr = _getRedisCommands(criteriaSetsObj)
+    criteriaModel.save(commandsArr, cb)
+  },
 
-    /**
-     * flatten buyers object to get all offers
-     * filter them and get the ones matching the search criteria
-     * sort them based on the most value offer
-     */
-    var bestOffers = _getAllOffers(buyers)
-      .filter(
-        ({ criteria: { device, state, hour, day } }) =>
-          device.includes(reqDevice) &&
-          state.includes(reqState) &&
-          day.includes(reqDay) &&
-          hour.includes(reqHour)
-      )
-      .sort(({ value: valueA }, { value: valueB }) => valueB - valueA)
-
-    return bestOffers[HEAD].location
+  getBestLocation: (query, cb) => {
+    var interSets = _getInterSets(query)
+    criteriaModel.intersect(interSets, cb)
   }
 }
 
-/**
- * flatten buyers Object to get
- * all offers from all buyers
- *
- * @param {*} buyers
- * @returns [offers]
- */
-var _getAllOffers = buyers => {
-  var allOffers = []
-  Object.values(buyers).forEach(buyer => {
-    var { offers } = JSON.parse(buyer)
-    allOffers.push(...offers)
+function _getCriteriaSets (offers) {
+  var criteriaSets = {}
+  offers.forEach(({ criteria, value: score, location }) => {
+    for (var key in criteria) {
+      criteria[key].forEach(criteriaVal => {
+        if (Array.isArray(criteriaSets[`${key}:${criteriaVal}`])) {
+          criteriaSets[`${key}:${criteriaVal}`].push(score, location)
+        } else {
+          criteriaSets[`${key}:${criteriaVal}`] = [score, location]
+        }
+      })
+    }
   })
-  return allOffers
+  return criteriaSets
+}
+
+function _getRedisCommands (object) {
+  var commandArr = []
+  for (var key in object) {
+    if (object.hasOwnProperty(key)) {
+      commandArr.push([key, ...object[key]])
+    }
+  }
+  return commandArr
+}
+
+function _getInterSets (query) {
+  var { timestamp, device, state } = query
+  var date = new Date(timestamp)
+  var hour = date.getUTCHours()
+  var day = date.getUTCDay()
+  return [`device:${device}`, `hour:${hour}`, `day:${day}`, `state:${state}`]
 }
