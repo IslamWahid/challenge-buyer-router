@@ -84,8 +84,8 @@ getServer((err, server) => {
     }
   })
 
-  db.dropDatabase(() => {
-    tape('should add events', function (t) {
+  tape('should add events', function (t) {
+    db.dropDatabase(() => {
       map(events, 1, addEvent, function (err) {
         t.ifError(err, 'should not error')
         t.end()
@@ -97,9 +97,35 @@ getServer((err, server) => {
           t.equal(res.statusCode, 201, 'correct statusCode')
           cb(err)
         })
-
         stream.end(JSON.stringify(event))
       }
     })
+  })
+
+  tape('should get report', function (t) {
+    var requests = [
+      {
+        zoneId: '6ak9jk',
+        type: 'zoneLoad',
+        groupBy: 'type',
+        sortBy: 'date',
+        sortType: -1
+      }
+    ]
+
+    map(requests, 1, getReport, function (err, report) {
+      t.ifError(err, 'should not error')
+      t.end()
+    })
+
+    function getReport (request, cb) {
+      var opts = { encoding: 'json' }
+      var url = '/report?' + querystring.stringify(request)
+      servertest(server, url, opts, function (err, res) {
+        if (err) return cb(err)
+        t.equal(res.statusCode, 200, 'correct statusCode')
+        cb(null, res.body.body)
+      })
+    }
   })
 })
