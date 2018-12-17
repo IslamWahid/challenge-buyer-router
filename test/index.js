@@ -124,7 +124,7 @@ getServer((err, server) => {
       servertest(server, url, opts, function (err, res) {
         if (err) return cb(err)
         t.equal(res.statusCode, 200, 'correct statusCode')
-        cb(null, res.body.body)
+        cb(null, res.body)
       })
     }
   })
