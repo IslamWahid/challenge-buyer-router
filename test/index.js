@@ -112,9 +112,24 @@ getServer((err, server) => {
         sortType: -1
       }
     ]
+    var expected = [
+      [
+        {
+          _id: 'zoneLoad',
+          events: [],
+          count: 6
+        }
+      ]
+    ]
 
     map(requests, 1, getReport, function (err, report) {
       t.ifError(err, 'should not error')
+      t.equal(report[0][0]._id, expected[0][0]._id, 'report should match _id')
+      t.equal(
+        report[0][0].count,
+        expected[0][0].count,
+        'report should match count'
+      )
       t.end()
     })
 
