@@ -86,19 +86,33 @@ getServer((err, server) => {
 
   tape('should add events', function (t) {
     db.dropDatabase(() => {
-      map(events, 1, addEvent, function (err) {
-        t.ifError(err, 'should not error')
-        t.end()
-      })
+      db.collection('events').createIndexes(
+        [
+          { name: 'type', key: { type: 1 } },
+          { name: 'zoneId', key: { zoneId: 1 } },
+          { name: 'date', key: { date: 1 } }
+        ],
+        function (err) {
+          if (err) return t.end()
 
-      function addEvent (event, cb) {
-        var opts = { encoding: 'json', method: 'POST' }
-        var stream = servertest(server, '/events', opts, function (err, res) {
-          t.equal(res.statusCode, 201, 'correct statusCode')
-          cb(err)
-        })
-        stream.end(JSON.stringify(event))
-      }
+          map(events, 1, addEvent, function (err) {
+            t.ifError(err, 'should not error')
+            t.end()
+          })
+
+          function addEvent (event, cb) {
+            var opts = { encoding: 'json', method: 'POST' }
+            var stream = servertest(server, '/events', opts, function (
+              err,
+              res
+            ) {
+              t.equal(res.statusCode, 201, 'correct statusCode')
+              cb(err)
+            })
+            stream.end(JSON.stringify(event))
+          }
+        }
+      )
     })
   })
 

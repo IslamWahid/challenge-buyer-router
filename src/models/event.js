@@ -1,11 +1,13 @@
-var mongoDb = require('../mongo').getDb()
+var events = require('../mongo')
+  .getDb()
+  .collection('events')
 
 module.exports = { create, aggregate }
 
 function create (document, cb) {
-  mongoDb.collection('events').insertOne(document, cb)
+  events.insertOne(document, cb)
 }
 
 function aggregate (aggregation, cb) {
-  mongoDb.collection('events').aggregate(aggregation, cb)
+  events.aggregate(aggregation, cb)
 }
